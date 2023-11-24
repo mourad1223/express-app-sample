@@ -12,7 +12,7 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     networks:
-      - webnet
+      - mysql_app
 
   web:
     image: moumou200/express-app-sample:latest
@@ -35,7 +35,7 @@ services:
     depends_on:
       - db
     networks:
-      - webnet
+      - mysql_app
 
 secrets:
   db_host:
@@ -51,5 +51,5 @@ volumes:
   db_data:
 
 networks:
-  webnet:
+  mysql_app:
     driver: overlay
