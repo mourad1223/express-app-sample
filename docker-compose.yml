@@ -1,0 +1,40 @@
+version: '3.7'
+
+services:
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mydatabase
+    volumes:
+      - db_data:/var/lib/mysql
+
+  web:
+    image: moumou200/express-app-sample:latest
+    ports:
+      - "3000:3000"
+    secrets:
+      - db_host
+      - db_user
+      - db_password
+      - db_name
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: password
+      DB_NAME: mydatabase
+    depends_on:
+      - db
+
+secrets:
+  db_host:
+    external: true
+  db_user:
+    external: true
+  db_password:
+    external: true
+  db_name:
+    external: true
+
+volumes:
+  db_data:
