@@ -1,34 +1,64 @@
 // Import des dépendances nécessaires
 const express = require('express');                // Framework web Express
 const mysql = require('mysql2/promise');           // Client MySQL avec support des Promises
+const fs = require('fs').promises;
 require('dotenv').config();                       // Chargement des variables d'environnement
 
 // Création de l'application Express
 const app = express();
 
+// Fonction pour lire le contenu d'un fichier secret
+async function readSecret(path) {
+    try {
+        if (!path) return null;
+        const secret = await fs.readFile(path, 'utf8');
+        return secret.trim();
+    } catch (err) {
+        console.error(`Erreur lors de la lecture du secret ${path}:`, err);
+        return null;
+    }
+}
+
 // Fonction pour vérifier la connexion à la base de données
 async function checkDbConnection() {
-    // Récupération des paramètres de connexion depuis les variables d'environnement
-    // avec des valeurs par défaut si non définies
-    const dbHost = process.env.DB_HOST || 'localhost';
-    const dbUser = process.env.DB_USER || 'root';
-    const dbPassword = process.env.DB_PASSWORD || '';
-    const dbName = process.env.DB_NAME || 'test';
-
     try {
-        // Tentative de connexion à la base de données
-        const connection = await mysql.createConnection({
-            host: dbHost,
-            user: dbUser,
-            password: dbPassword,
-            database: dbName,
+        // Configuration de la base de données
+        const config = {
+            host: 'db',  // Nom du service dans docker-compose
+            user: 'root',
+            password: 'password',
+            database: 'mydatabase'
+        };
+
+        // Si les secrets sont disponibles, les utiliser
+        if (process.env.DB_HOST) {
+            const dbHost = await readSecret(process.env.DB_HOST);
+            if (dbHost) config.host = dbHost;
+        }
+        if (process.env.DB_USER) {
+            const dbUser = await readSecret(process.env.DB_USER);
+            if (dbUser) config.user = dbUser;
+        }
+        if (process.env.DB_PASSWORD) {
+            const dbPassword = await readSecret(process.env.DB_PASSWORD);
+            if (dbPassword) config.password = dbPassword;
+        }
+        if (process.env.DB_NAME) {
+            const dbName = await readSecret(process.env.DB_NAME);
+            if (dbName) config.database = dbName;
+        }
+
+        console.log('Tentative de connexion avec les paramètres :', {
+            host: config.host,
+            user: config.user,
+            database: config.database
         });
-        // Fermeture propre de la connexion
+
+        const connection = await mysql.createConnection(config);
         await connection.end();
         return true;
     } catch (err) {
-        // En cas d'erreur, affichage dans la console
-        console.error('Failed to connect to database:', err.message);
+        console.error('Échec de la connexion à la base de données:', err.message);
         return false;
     }
 }

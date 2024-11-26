@@ -1,65 +1,55 @@
-# Version de Docker Compose utilisée
 version: '3.8'
 
-# Définition des services de l'application
 services:
-  # Service de base de données MySQL
   db:
-    image: mysql:latest    # Utilise la dernière version de MySQL
+    image: mysql:latest
     environment:
-      # Variables d'environnement pour configurer MySQL
-      MYSQL_ROOT_PASSWORD: password    # Mot de passe pour l'utilisateur root
-      MYSQL_DATABASE: mydatabase       # Nom de la base de données à créer
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_password
+      MYSQL_DATABASE_FILE: /run/secrets/db_name
+    secrets:
+      - db_password
+      - db_name
     volumes:
-      # Stockage persistant des données MySQL
       - db_data:/var/lib/mysql
     networks:
-      # Connexion au réseau webnet pour communiquer avec l'application
       - webnet
 
-  # Service de l'application web Express
   web:
-    image: moumou200/express-app-sample:latest  # Image de l'application
+    image: moumou200/express-app-sample:latest
     deploy:
-      replicas: 2                     # Nombre d'instances de l'application
+      replicas: 2
       restart_policy:
-        condition: any                # Redémarrage automatique en cas d'erreur
+        condition: any
     ports:
-      - "3000:3000"                  # Exposition du port 3000
+      - "3000:3000"
     secrets:
-      # Secrets Docker pour les informations sensibles
       - db_host
       - db_user
       - db_password
       - db_name
     environment:
-      # Variables d'environnement pour la connexion à la base de données
-      DB_HOST: db                    # Nom du service de la base de données
-      DB_USER: root                  # Utilisateur MySQL
-      DB_PASSWORD: password          # Mot de passe MySQL
-      DB_NAME: mydatabase           # Nom de la base de données
+      DB_HOST_FILE: /run/secrets/db_host
+      DB_USER_FILE: /run/secrets/db_user
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      DB_NAME_FILE: /run/secrets/db_name
     depends_on:
-      - db                          # Dépendance au service db
+      - db
     networks:
-      - webnet                      # Même réseau que la base de données
+      - webnet
 
-# Définition des secrets Docker (stockage sécurisé)
 secrets:
   db_host:
-    external: true                  # Les secrets sont gérés en externe
+    file: ./secrets/db_host.txt
   db_user:
-    external: true
+    file: ./secrets/db_user.txt
   db_password:
-    external: true
+    file: ./secrets/db_password.txt
   db_name:
-    external: true
+    file: ./secrets/db_name.txt
 
-# Définition des volumes pour le stockage persistant
 volumes:
-  db_data:                         # Volume pour les données MySQL
+  db_data:
 
-# Configuration des réseaux
 networks:
   webnet:
-    driver: overlay                # Réseau overlay pour Docker Swarm
-
+    driver: overlay
