@@ -1,95 +1,147 @@
-# Express App with Docker Swarm
+# Express App avec Docker Swarm et Gestion des Secrets
 
-## Description
-Ce projet est une application Node.js utilisant Express, déployée avec Docker Swarm et automatisée avec GitHub Actions. L'application vérifie la connexion à une base de données MySQL et fournit une interface web accessible via un tunnel ngrok.
+## 📋 Description
+Application Node.js/Express déployée avec Docker Swarm, utilisant une base de données MySQL et une gestion sécurisée des secrets. L'application fournit une API REST simple avec vérification de la connexion à la base de données.
 
-## Prérequis
-- [Node.js](https://nodejs.org/) (version 14 ou supérieure)
-- [Docker](https://www.docker.com/)
-- [Docker Compose](https://docs.docker.com/compose/)
-- [ngrok](https://ngrok.com/)
-- Un compte Docker Hub
-- Un compte GitHub
+## 🚀 Fonctionnalités
+- Architecture microservices avec Docker Swarm
+- Gestion sécurisée des secrets Docker
+- Base de données MySQL avec persistance des données
+- Réplication automatique des services
+- Vérification de l'état de la base de données
+- Logs détaillés pour le débogage
 
-## Installation
+## 🔧 Prérequis
+- [Node.js](https://nodejs.org/) (v14 ou supérieur)
+- [Docker](https://www.docker.com/get-started)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+- [Git](https://git-scm.com/)
+
+## 📦 Installation
 
 ### 1. Cloner le dépôt
 ```bash
-git clone https://github.com/moumou200/express-app-sample.git
+git clone https://github.com/mourad1223/express-app-sample.git
 cd express-app-sample
 ```
 
-### 2. Installer les dépendances
+### 2. Configuration des secrets
+Créez un dossier `secrets` et les fichiers de secrets :
 ```bash
-npm install
+mkdir -p secrets
+echo "db" > secrets/db_host.txt
+echo "root" > secrets/db_user.txt
+echo "password" > secrets/db_password.txt
+echo "mydatabase" > secrets/db_name.txt
 ```
 
-### 3. Configurer Docker et Docker Swarm
-
-Initialiser Docker Swarm :
+### 3. Initialiser Docker Swarm
 ```bash
 docker swarm init
 ```
 
-Créer des Docker secrets :
-```bash
-echo "db" > db_host.txt
-echo "root" > db_user.txt
-echo "password" > db_password.txt
-echo "mydatabase" > db_name.txt
-
-docker secret create db_host db_host.txt
-docker secret create db_user db_user.txt
-docker secret create db_password db_password.txt
-docker secret create db_name db_name.txt
-```
-
-### 4. Déployer avec Docker stack
+### 4. Déployer l'application
 ```bash
 docker stack deploy -c docker-compose.yml my_app_stack
 ```
 
-### 5. Accéder à l'application
+## 🌐 Utilisation
 
-L'application sera accessible via le port 3000 :
+### Endpoints disponibles
+- **GET /** : Page d'accueil
+  ```
+  http://localhost:3000/
+  ```
+- **GET /check-db** : Vérification de la connexion à la base de données
+  ```
+  http://localhost:3000/check-db
+  ```
 
+### Vérifier l'état des services
+```bash
+docker service ls
 ```
-http://localhost:3000
+
+### Consulter les logs
+```bash
+docker service logs my_app_stack_web
+docker service logs my_app_stack_db
 ```
 
-### 6. Vérifier la connexion à la base de données
+## 🏗️ Architecture
 
-Utilisez l'endpoint `/check-db` pour vérifier la connexion à la base de données :
-
-```
-http://localhost:3000/check-db
-```
-
-## Structure du projet
-
+### Structure du projet
 ```
 express-app-sample/
 ├── app.js              # Application Express
-├── docker-compose.yml  # Configuration Docker Compose
-├── Dockerfile         # Configuration de l'image Docker
+├── docker-compose.yml  # Configuration Docker
+├── Dockerfile         # Configuration de l'image
+├── secrets/          # Dossier des secrets Docker
+│   ├── db_host.txt
+│   ├── db_user.txt
+│   ├── db_password.txt
+│   └── db_name.txt
 ├── .env              # Variables d'environnement
 └── README.md         # Documentation
 ```
 
-## Variables d'environnement
+### Services Docker
+- **Web** : Application Express (2 réplicas)
+- **DB** : Base de données MySQL
 
-Les variables suivantes doivent être définies dans le fichier `.env` :
+## 🔐 Sécurité
+- Utilisation des secrets Docker pour les informations sensibles
+- Variables d'environnement pour la configuration
+- Isolation des services via Docker networks
+- Pas de mot de passe en clair dans le code
 
-- `DB_HOST` : Hôte de la base de données
-- `DB_USERNAME` : Nom d'utilisateur MySQL
-- `DB_PASSWORD` : Mot de passe MySQL
-- `DB_NAME` : Nom de la base de données
-- `PORT` : Port de l'application (par défaut: 3000)
+## 🛠️ Développement
 
-## Endpoints API
+### Installation des dépendances de développement
+```bash
+npm install
+```
 
-- `GET /` : Page d'accueil
-- `GET /check-db` : Vérification de la connexion à la base de données
+### Variables d'environnement
+Créez un fichier `.env` avec :
+```env
+DB_HOST=db
+DB_USERNAME=root
+DB_PASSWORD=password
+DB_NAME=mydatabase
+PORT=3000
+```
+
+## 📝 Maintenance
+
+### Mise à jour des services
+```bash
+docker stack deploy -c docker-compose.yml my_app_stack
+```
+
+### Arrêt des services
+```bash
+docker stack rm my_app_stack
+```
+
+## 🤝 Contribution
+Les contributions sont les bienvenues ! N'hésitez pas à :
+1. Fork le projet
+2. Créer une branche pour votre fonctionnalité
+3. Commiter vos changements
+4. Pousser vers la branche
+5. Ouvrir une Pull Request
+
+## 📄 Licence
+Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
+
+## 👥 Auteur
+- Mourad JAADAR (mjaadar1@myges.fr)
+
+## 🙏 Remerciements
+- L'équipe Docker pour leurs excellents outils
+- La communauté Express.js
+- MySQL pour leur base de données robuste
 
 Tunnel ngrok
 
