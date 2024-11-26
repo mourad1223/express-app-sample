@@ -44,4 +44,4 @@ jobs:
         port: ${{ secrets.SWARM_MANAGER_SSH_PORT }}
         script: |
           echo "Connexion réussie au serveur Swarm"
-          docker service update --image moumou200/express-app-sample:latest express_app_service
+          docker service update --image moumou200/express-app-sample:latest my_app_stack_web
