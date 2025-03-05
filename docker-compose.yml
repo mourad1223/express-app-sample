@@ -11,9 +11,10 @@ services:
 
   web:
     image: moumou200/express-app-sample:latest
-    replicas: 2
-    restart_policy:
-      condition: any
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
     ports:
       - "3000:3000"
     secrets:
@@ -41,3 +42,4 @@ secrets:
 
 volumes:
   db_data:
+
