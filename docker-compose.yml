@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.8'
 
 services:
   db:
@@ -8,6 +8,8 @@ services:
       MYSQL_DATABASE: mydatabase
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - webnet
 
   web:
     image: moumou200/express-app-sample:latest
@@ -29,6 +31,8 @@ services:
       DB_NAME: mydatabase
     depends_on:
       - db
+    networks:
+      - webnet
 
 secrets:
   db_host:
@@ -42,4 +46,8 @@ secrets:
 
 volumes:
   db_data:
+
+networks:
+  webnet:
+    driver: overlay
 
