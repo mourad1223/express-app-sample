@@ -25,7 +25,7 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: moumou200/express-app:latest
+        tags: moumou200/express-app-sample:latest
 
   deploy:
     runs-on: ubuntu-latest
