@@ -33,6 +33,11 @@ echo "db" > secrets/db_host.txt
 echo "root" > secrets/db_user.txt
 echo "password" > secrets/db_password.txt
 echo "mydatabase" > secrets/db_name.txt
+
+docker secret create db_host db_host.txt
+docker secret create db_user db_user.txt
+docker secret create db_password db_password.txt
+docker secret create db_name db_name.txt
 ```
 
 ### 3. Initialiser Docker Swarm
