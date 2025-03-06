@@ -51,5 +51,5 @@ volumes:
   db_data:
 
 networks:
-  mysql_app:
+  mysql_app: 
     driver: overlay
