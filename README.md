@@ -86,7 +86,6 @@ express-app-sample/
 │   ├── db_user.txt
 │   ├── db_password.txt
 │   └── db_name.txt
-├── .env              # Variables d'environnement
 └── README.md         # Documentation
 ```
 
@@ -107,15 +106,6 @@ express-app-sample/
 npm install
 ```
 
-### Variables d'environnement
-Créez un fichier `.env` avec :
-```env
-DB_HOST=db
-DB_USERNAME=root
-DB_PASSWORD=password
-DB_NAME=mydatabase
-PORT=3000
-```
 
 ## 📝 Maintenance
 
